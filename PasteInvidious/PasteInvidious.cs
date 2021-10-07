@@ -28,6 +28,8 @@ namespace PasteInvidious
         [HarmonyPatch("ImportTask")]
         class UniversalImporter_ImportTask_Patch
         {
+            public const string InvidiousInstance = "invidious-us.kavin.rocks";
+
             public static void Prefix(AssetClass assetClass, ref IEnumerable<string> files)
             {
                 List<string> newList = new List<string>();
@@ -35,9 +37,14 @@ namespace PasteInvidious
                 {
                     string item = file;
                     Uri uri;
-                    if (assetClass == AssetClass.Video && Uri.TryCreate(file, UriKind.Absolute, out uri) && (uri.Host.Contains("youtube.com") || uri.Host.Contains("youtu.be")))
+                    if (assetClass == AssetClass.Video && Uri.TryCreate(file, UriKind.Absolute, out uri))
                     {
-                        item = file.Replace(uri.Host, "ytprivate.com") + "&raw=1";
+                        if (uri.Host.Contains("youtube.com"))
+                        {
+                            item = file.Replace(uri.Host, InvidiousInstance) + "&raw=1";
+                        }else if (uri.Host.Contains("youtu.be")){
+                            item = file.Replace(uri.Host + "/", InvidiousInstance + "/watch?v=") + "&raw=1";
+                        }
                     }
                     newList.Add(item);
                 }
