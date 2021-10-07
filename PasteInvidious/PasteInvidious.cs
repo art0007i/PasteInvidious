@@ -15,7 +15,7 @@ namespace PasteInvidious
     {
         public override string Name => "PasteInvidious";
         public override string Author => "art0007i";
-        public override string Version => "1.0.0";
+        public override string Version => "1.0.1";
         public override string Link => "https://github.com/art0007i/PasteInvidious/";
         public override void OnEngineInit()
         {
