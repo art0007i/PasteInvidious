@@ -1,6 +1,6 @@
 # PasteInvidious
 
-A [NeosModLoader](https://github.com/zkxs/NeosModLoader) mod for [Neos VR](https://neos.com/) that changes all pasted youtube links to [invidious](https://github.com/iv-org/invidious) links.<br>
+A [NeosModLoader](https://github.com/zkxs/NeosModLoader) mod for [Neos VR](https://neos.com/) that adds an import option that changes youtube links to [invidious](https://github.com/iv-org/invidious) links.<br>
 This allows playing geo locked and age restricted videos.
 
 ## Installation
