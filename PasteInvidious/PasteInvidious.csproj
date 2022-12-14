@@ -7,6 +7,7 @@
     <AssemblyTitle>PasteInvidious</AssemblyTitle>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <TargetFramework>net472</TargetFramework>
+	<LangVersion>latest</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <NeosPath>$(MSBuildThisFileDirectory)NeosVR</NeosPath>
@@ -32,6 +33,9 @@
     </Reference>
     <Reference Include="CodeX">
       <HintPath>$(NeosPath)Neos_Data\Managed\CodeX.dll</HintPath>
+    </Reference>
+    <Reference Include="CloudX.Shared">
+      <HintPath>$(NeosPath)Neos_Data\Managed\CloudX.Shared.dll</HintPath>
     </Reference>
     <Reference Include="NeosModLoader">
       <HintPath>$(NeosPath)NeosModLoader.dll</HintPath>

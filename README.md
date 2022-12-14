@@ -1,6 +1,6 @@
-# PasteInvidious
+# Paste~~Invidious~~Piped
 
-A [NeosModLoader](https://github.com/zkxs/NeosModLoader) mod for [Neos VR](https://neos.com/) that adds an import option that changes youtube links to [invidious](https://github.com/iv-org/invidious) links.<br>
+A [NeosModLoader](https://github.com/zkxs/NeosModLoader) mod for [Neos VR](https://neos.com/) that adds an import option that changes youtube links to [piped](https://github.com/TeamPiped/Piped) links.<br>
 This allows playing geo locked and age restricted videos.
 
 ## Installation
