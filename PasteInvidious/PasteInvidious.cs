@@ -14,7 +14,7 @@ namespace PasteInvidious
     {
         public override string Name => "PasteInvidious";
         public override string Author => "art0007i";
-        public override string Version => "2.0.0";
+        public override string Version => "2.0.1";
         public override string Link => "https://github.com/art0007i/PastePiped/";
         public override void OnEngineInit()
         {
@@ -63,24 +63,23 @@ namespace PasteInvidious
                             btn.LabelText = "Importing...";
           
                             await default(ToBackground);
-                            __instance.Paths = __instance.Paths.ConvertAll(str =>
+                            __instance.Paths = (await Task.WhenAll(__instance.Paths.ConvertAll(async str =>
                             {
                                 Uri uri;
                                 if (Uri.TryCreate(str, UriKind.Absolute, out uri))
                                 {
-                                    
+                                    if (!(uri.Host.Contains("youtube.com") || uri.Host.Contains("youtu.be"))) return str;
 
-                                    string videoId = null;
-                                    if (uri.Host.Contains("youtube.com"))
-                                        videoId = Regex.Match(str, "youtube.com\\/watch.*?[?&]v=(\\w+)").Groups[1].Value;
-                                    else if (uri.Host.Contains("youtu.be"))
-                                        videoId = Regex.Match(str, "youtu.be\\/(\\w+)").Groups[1].Value;
-
+                                    // regex from https://stackoverflow.com/a/6904504
+                                    string videoId = Regex.Match(str,
+                                        "(?:youtube\\.com\\/(?:[^\\/]+\\/.+\\/|(?:v|e(?:mbed)?)\\/|.*[?&]v=)|youtu\\.be\\/)([^\"&?\\/\\s]{11})")
+                                        .Groups[1].Value;
                                     if (videoId == null) return str;
+                                    Debug("Got video id: " + videoId);
 
                                     // Piped requires an api request to get stream urls that we can use in a video player.
-                                    var t = __instance.Engine.Cloud.GET<PipedResponse>(PIPED_PATH + videoId);
-                                    t.Wait();
+                                    var t = await __instance.Engine.Cloud.GET<PipedResponse>(PIPED_PATH + videoId);
+                                    Debug("Got response from piped server, status code: " + t.State);
 
                                     int parseYtQuality(VideoInfo v)
                                     {
@@ -89,18 +88,25 @@ namespace PasteInvidious
                                         return int.TryParse(v.quality.Replace('p', '0'), out var vid) ? vid : 0;
                                     };
                                     // Find the best quality video stream, that has both audio and video channels
-                                    var s = t.Result.Entity.videoStreams
+                                    var s = t.Entity.videoStreams
                                         .Where((v) => v.videoOnly == false)
                                         .Aggregate((i1, i2) => parseYtQuality(i1) > parseYtQuality(i2) ? i1 : i2);
 
+                                    Debug("Found piped video url, quality: " + s.quality + ", mime type: " + s.mimeType);
                                     // neos doesn't want to play the video unless it ends with mp4, so doing this actually works...
                                     return s.url + "&neossucks=.mp4";
                                 }
                                 return str;
-                            });
+                            }))).ToList();
                             await default(ToWorld);
+
                             // hmm yes reflection is fun
-                            AccessTools.Method(typeof(ImportDialog), "Open").Invoke(__instance, new object[] { (Action<UIBuilder>)AccessTools.Method(typeof(VideoImportDialog), "OpenRoot", new Type[] { typeof(UIBuilder) }).CreateDelegate(typeof(Action<UIBuilder>), __instance) });
+                            AccessTools.Method(typeof(ImportDialog), "Open")
+                                .Invoke(__instance, new object[] {
+                                    (Action<UIBuilder>)AccessTools.Method(typeof(VideoImportDialog),
+                                        "OpenRoot",
+                                        new Type[] { typeof(UIBuilder) })
+                                        .CreateDelegate(typeof(Action<UIBuilder>), __instance) });
                         }
                     };
                 }
